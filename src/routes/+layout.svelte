@@ -2,11 +2,19 @@
   import { page } from '$app/state';
 
   let { children } = $props();
+
+  const isNotLogin = () => {
+    return true
+  };
+
+  // const isPageNotFound = page.status === 404 && page.error?.message === 'Not Found'
 </script>
 
 <div class="container-scroller">
   {#if page.error}
-    <span>{JSON.stringify(page.error)}</span>
+    {@render children()}
+  {:else if isNotLogin()}
+    {@render children()}
   {:else}
     <!-- partial:/partials/_navbar.html -->
     <nav class="navbar default-layout-navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">

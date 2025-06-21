@@ -1,17 +1,30 @@
-type User = { id: string; email: string; password: string; name: string; };
-type UserInfo = Omit<User, 'password'>;
-type RegisterInput = Omit<User, 'id'>;
+import { randomSleep } from './delay'
 
 // ------------------------------------------------------------------------------------------------
 
-const users = new Map<string, User>();
+type User = { id: string; email: string; password: string; fullName: string; };
+type UserInfo = Omit<User, 'password'>;
+
+// ------------------------------------------------------------------------------------------------
+
+const users = new Map<string, User>([
+  [
+    "1",
+    {
+      id: "1",
+      email: "admin@example.com",
+      password: "admin",
+      fullName: "Admin",
+    }
+  ]
+]);
 
 const getUserInfoById = (id: string): UserInfo | null => {
   for (const user of users.values()) {
     if (user.id === id) {
       return {
         id: user.id,
-        name: user.name,
+        fullName: user.fullName,
         email: user.email,
       };
     }
@@ -21,7 +34,8 @@ const getUserInfoById = (id: string): UserInfo | null => {
 
 // ------------------------------------------------------------------------------------------------
 
-export const isEmailRegistered = (email: string): boolean => {
+export const isEmailTaken = (email: string): boolean => {
+  console.log(users.values())
   for (const user of users.values()) {
     if (user.email === email) {
       return true;
@@ -30,8 +44,11 @@ export const isEmailRegistered = (email: string): boolean => {
   return false;
 }
 
-export const register = (user: RegisterInput): UserInfo => {
-  if (isEmailRegistered(user.email)) {
+export const register = async (email: string, password: string, fullName: string) => {
+  // Simulate a delay to mimic real-world scenarios
+  await randomSleep();
+
+  if (isEmailTaken(email)) {
     throw new Error('Email already exists');
   }
 
@@ -40,19 +57,23 @@ export const register = (user: RegisterInput): UserInfo => {
     id = crypto.randomUUID();
   } while (users.has(id));
 
-  const newUser: User = { id, ...user };
-  users.set(id, newUser);
+  users.set(id, {
+    id,
+    email,
+    password,
+    fullName
+  });
 
   return getUserInfoById(id)!;
 };
 
-export const login = (email: string, password: string): UserInfo | null => {
+export const login = async (email: string, password: string): Promise<UserInfo> => {
   for (const user of users.values()) {
     if (user.email === email && user.password === password) {
-      return getUserInfoById(user.id);
+      return getUserInfoById(user.id)!;
     }
   }
-  return null;
+  throw new Error('Invalid email or password');
 }
 
 export const getAllUsers = (): UserInfo[] => {
