@@ -44,13 +44,18 @@
   if (emailError || fullNameError || passwordError || rePasswordError) {
     submitting = false
     cancel()
-    return
   }
 
   return async ({ result, update }) => {
     // `result` is an `ActionResult` object
     // `update` is a function which triggers the default logic that would be triggered if this callback wasn't set
     await update()
+
+    // It seems like this code is unnecessary, the redirect is handled in +page.server.ts
+    // if (result.type === 'redirect') {
+    //   goto(result.location)
+    // }
+
     submitting = false
   }
 }}>

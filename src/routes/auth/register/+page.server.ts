@@ -1,9 +1,16 @@
-import * as MockUsers from '$lib/server/users'
+import * as MockUsers from '$lib/database/users'
 import { fail, redirect } from '@sveltejs/kit'
+
+export const load = async () => {
+  // This load function can be used to fetch any data needed for the registration page
+  // For example, you might want to check if the user is already logged in
+  // or fetch some initial data to display on the page.
+  // In this case, we don't need to fetch any data, so we return an empty object.
+  return {}
+}
 
 export const actions = {
   register: async ({ request }: { request: Request }) => {
-    console.log('Register action called')
     try {
       const data = await request.formData()
 
@@ -12,11 +19,6 @@ export const actions = {
       const fullName = data.get('fullName')?.toString() || ''
 
       await MockUsers.register(email, password, fullName)
-
-      // 303 — for form actions, following a successful submission
-      // 307 — for temporary redirects
-      // 308 — for permanent redirects
-      return redirect(303, '/auth/login')
     } catch (error) {
       console.error('Register failed:', error)
       let message = 'An unknown error occurred'
@@ -25,5 +27,10 @@ export const actions = {
       }
       return fail(422, { error: { message } })
     }
+
+    // 303 — for form actions, following a successful submission
+    // 307 — for temporary redirects
+    // 308 — for permanent redirects
+    return redirect(303, '/auth/login')
   }
 }

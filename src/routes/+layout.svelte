@@ -1,19 +1,14 @@
 <script lang=ts>
-  import { page } from '$app/state';
+  import { page } from '$app/state'
 
-  let { children } = $props();
+  let { children } = $props()
 
-  const isNotLogin = () => {
-    return true
-  };
-
-  // const isPageNotFound = page.status === 404 && page.error?.message === 'Not Found'
+  const isError = page.error
+  const isNotLoggedIn = page.data.isNotLoggedIn
 </script>
 
 <div class="container-scroller">
-  {#if page.error}
-    {@render children()}
-  {:else if isNotLogin()}
+  {#if isNotLoggedIn || isError}
     {@render children()}
   {:else}
     <!-- partial:/partials/_navbar.html -->

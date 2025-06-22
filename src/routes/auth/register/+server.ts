@@ -1,4 +1,4 @@
-import * as MockUsers from '$lib/server/users'
+import * as MockUsers from '$lib/database/users'
 import { json } from '@sveltejs/kit'
 import type { RequestEvent } from '@sveltejs/kit'
 
