@@ -83,3 +83,10 @@ export const login = async (email: string, password: string) => {
   }
   throw new Error('Invalid email or password')
 }
+
+export const verifyToken = async (accessToken: string) => {
+  // Simulate a delay to mimic real-world scenarios
+  await randomSleep()
+
+  return jwt.verify(accessToken, JWT_ACCESS_SECRET) as UserInfo
+}

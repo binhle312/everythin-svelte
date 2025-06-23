@@ -1,10 +1,11 @@
 <script lang=ts>
+	import { goto } from '$app/navigation';
   import { page } from '$app/state'
 
   let { children } = $props()
 
   const isError = page.error
-  const isNotLoggedIn = page.data.isNotLoggedIn
+  const isNotLoggedIn = $derived(page.data.isNotLoggedIn)
 </script>
 
 <div class="container-scroller">
@@ -43,11 +44,12 @@
               </div>
             </a>
             <div class="dropdown-menu navbar-dropdown" aria-labelledby="profileDropdown">
-              <a class="dropdown-item" href="unknow">
-                <i class="mdi mdi-cached me-2 text-success"></i> Activity Log </a>
+              <a class="dropdown-item" href="unknow"><i class="mdi mdi-cached me-2 text-success"></i> Activity Log </a>
               <div class="dropdown-divider"></div>
-              <a class="dropdown-item" href="unknow">
-                <i class="mdi mdi-logout me-2 text-primary"></i> Signout </a>
+              <button type="button" class="dropdown-item" onclick={async () => {
+                await fetch('/auth/logout', { method: 'POST', headers: { 'Content-Type': 'application/json' }})
+                goto('/auth/login')
+              }}><i class="mdi mdi-logout me-2 text-primary"></i> Signout </button>
             </div>
           </li>
           <li class="nav-item d-none d-lg-block full-screen-link">
