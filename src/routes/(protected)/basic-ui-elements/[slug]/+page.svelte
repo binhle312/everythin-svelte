@@ -1,7 +1,5 @@
 <script lang="ts">
-  let { data } = $props();
-  $inspect(data);
-  console.log('Data:', data);
+  let { data } = $props()
 </script>
 
 <h1>{data.element.title}</h1>

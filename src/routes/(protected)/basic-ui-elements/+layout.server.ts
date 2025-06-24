@@ -1,5 +1,4 @@
-import MockData from './data';
-
+import MockData from './data'
 
 export const load = () => {
   return {
@@ -7,5 +6,5 @@ export const load = () => {
       slug: element.slug,
       title: element.title,
     })),
-  };
+  }
 }

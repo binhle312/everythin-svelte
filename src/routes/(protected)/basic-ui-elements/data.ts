@@ -4,4 +4,4 @@ const uiElements = [
   { slug: 'typography', title: 'Typography' , content: '<p>Typography</p>'},
 ]
 
-export default { uiElements };
+export default { uiElements }

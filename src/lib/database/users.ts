@@ -1,4 +1,4 @@
-import { randomSleep } from './delay'
+import { randomSleep } from '../helpers/delay'
 import jwt from 'jsonwebtoken'
 
 // ------------------------------------------------------------------------------------------------
