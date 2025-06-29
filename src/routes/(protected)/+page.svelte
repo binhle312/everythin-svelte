@@ -1,3 +1,183 @@
+<script>
+  import { onMount } from 'svelte';
+
+  onMount(() => {
+    // Load Chart.js if not already loaded
+    if (!window.Chart) {
+      const script = document.createElement('script');
+      script.src = 'https://cdn.jsdelivr.net/npm/chart.js';
+      script.onload = initializeCharts;
+      document.head.appendChild(script);
+    } else {
+      initializeCharts();
+    }
+  });
+
+  function initializeCharts() {
+    // Visit and Sales Statistics Chart (Line Chart)
+    if (document.getElementById('visit-sale-chart')) {
+      const visitSaleCtx = document.getElementById('visit-sale-chart').getContext('2d');
+      new Chart(visitSaleCtx, {
+        type: 'line',
+        data: {
+          labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+          datasets: [{
+            label: 'Sales',
+            data: [40, 39, 10, 40, 39, 80, 40, 20, 12, 11, 60, 55],
+            borderColor: '#587ce4',
+            backgroundColor: 'rgba(88, 124, 228, 0.1)',
+            borderWidth: 2,
+            fill: true,
+            tension: 0.4
+          }, {
+            label: 'Visits',
+            data: [30, 25, 16, 30, 25, 60, 30, 15, 8, 7, 40, 35],
+            borderColor: '#ede190',
+            backgroundColor: 'rgba(237, 225, 144, 0.1)',
+            borderWidth: 2,
+            fill: true,
+            tension: 0.4
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: true,
+          aspectRatio: 2.5,
+          interaction: {
+            intersect: false,
+            mode: 'index'
+          },
+          plugins: {
+            legend: {
+              display: false // We'll use the custom legend div
+            }
+          },
+          scales: {
+            x: {
+              grid: {
+                display: false
+              }
+            },
+            y: {
+              beginAtZero: true,
+              grid: {
+                borderDash: [2, 2]
+              }
+            }
+          }
+        }
+      });
+
+      // Custom legend for visit-sale-chart
+      const legendContainer = document.getElementById('visit-sale-chart-legend');
+      if (legendContainer) {
+        legendContainer.innerHTML = `
+          <div class="d-flex">
+            <div class="me-3">
+              <span class="legend-dots" style="background: #587ce4;"></span>
+              <span class="legend-text">Sales</span>
+            </div>
+            <div>
+              <span class="legend-dots" style="background: #ede190;"></span>
+              <span class="legend-text">Visits</span>
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    // Traffic Sources Chart (Doughnut Chart)
+    if (document.getElementById('traffic-chart')) {
+      const trafficCtx = document.getElementById('traffic-chart').getContext('2d');
+      new Chart(trafficCtx, {
+        type: 'doughnut',
+        data: {
+          labels: ['Search Engines', 'Direct Click', 'Bookmarks Click', 'Other'],
+          datasets: [{
+            data: [40, 35, 15, 10],
+            backgroundColor: [
+              'rgba(255, 99, 132, 0.8)',
+              'rgba(54, 162, 235, 0.8)',
+              'rgba(255, 206, 86, 0.8)',
+              'rgba(75, 192, 192, 0.8)'
+            ],
+            borderColor: [
+              'rgba(255, 99, 132, 1)',
+              'rgba(54, 162, 235, 1)',
+              'rgba(255, 206, 86, 1)',
+              'rgba(75, 192, 192, 1)'
+            ],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: true,
+          aspectRatio: 1,
+          cutout: '60%',
+          plugins: {
+            legend: {
+              display: false // We'll use the custom legend div
+            }
+          },
+          animation: {
+            animateScale: true,
+            animateRotate: true
+          }
+        }
+      });
+
+      // Custom legend for traffic-chart
+      const trafficLegendContainer = document.getElementById('traffic-chart-legend');
+      if (trafficLegendContainer) {
+        trafficLegendContainer.innerHTML = `
+          <div class="legend-item">
+            <span class="legend-dots" style="background: rgba(255, 99, 132, 0.8);"></span>
+            <span class="legend-text">Search Engines (40%)</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-dots" style="background: rgba(54, 162, 235, 0.8);"></span>
+            <span class="legend-text">Direct Click (35%)</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-dots" style="background: rgba(255, 206, 86, 0.8);"></span>
+            <span class="legend-text">Bookmarks Click (15%)</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-dots" style="background: rgba(75, 192, 192, 0.8);"></span>
+            <span class="legend-text">Other (10%)</span>
+          </div>
+        `;
+      }
+    }
+  }
+</script>
+
+<style>
+  .legend-dots {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin-right: 8px;
+  }
+  
+  .legend-text {
+    font-size: 14px;
+    color: #6c7293;
+  }
+  
+  .legend-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+  
+  .legend-item:last-child {
+    margin-bottom: 0;
+  }
+</style>
+
 <div class="row">
   <div class="col-md-4 stretch-card grid-margin">
     <div class="card bg-gradient-danger card-img-holder text-white">
