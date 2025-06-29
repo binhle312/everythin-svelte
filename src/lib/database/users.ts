@@ -36,7 +36,7 @@ const getUserInfoById = (id: string): UserInfo => {
 }
 
 const generateAccessToken = (user: UserInfo): string => {
-  return jwt.sign({ ...user }, JWT_ACCESS_SECRET, { expiresIn: '15m' })
+  return jwt.sign({ ...user }, JWT_ACCESS_SECRET, { expiresIn: '1d' })
 }
 
 // ------------------------------------------------------------------------------------------------

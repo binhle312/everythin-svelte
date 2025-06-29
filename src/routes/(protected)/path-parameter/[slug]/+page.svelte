@@ -1,4 +1,4 @@
-<script lang="ts">
+<script lang="ts">../../basic-ui-elements copy/[slug]/$types.js
   let { data } = $props()
 </script>
 

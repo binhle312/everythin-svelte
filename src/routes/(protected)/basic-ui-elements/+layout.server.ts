@@ -1,10 +1,9 @@
-import MockData from './data'
+import { PAGES } from '$lib/constants/page.constant'
+import type { LayoutServerLoad } from './$types'
 
-export const load = () => {
-  return {
-    elements: MockData.uiElements.map((element) => ({
-      slug: element.slug,
-      title: element.title,
-    })),
-  }
+
+export const load: LayoutServerLoad = async ({ url }) => {
+  const pageInformation = Object.values(PAGES).find(p => p.path === url.pathname)
+
+  return { pageInformation }
 }
