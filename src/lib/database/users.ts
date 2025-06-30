@@ -3,7 +3,14 @@ import jwt from 'jsonwebtoken'
 
 // ------------------------------------------------------------------------------------------------
 
-type User = { id: string; email: string; password: string; fullName: string; }
+type User = {
+  id: string;
+  email: string;
+  password: string;
+  fullName: string;
+  status: 'active' | 'inactive';
+}
+
 type UserInfo = Omit<User, 'password'>
 
 // ------------------------------------------------------------------------------------------------
@@ -15,9 +22,50 @@ const users = new Map<string, User>([
     "1",
     {
       id: "1",
-      email: "admin@example.com",
+      email: "admin@everythin.com",
       password: "admin",
       fullName: "Admin",
+      status: "active",
+    }
+  ],
+  [
+    "2",
+    {
+      id: "2",
+      email: "jane.doe@everythin.com",
+      password: "password123",
+      fullName: "Jane Doe",
+      status: "active",
+    }
+  ],
+  [
+    "3",
+    {
+      id: "3",
+      email: "john.smith@everythin.com",
+      password: "qwerty",
+      fullName: "John Smith",
+      status: "inactive",
+    }
+  ],
+  [
+    "4",
+    {
+      id: "4",
+      email: "alice.wonderland@everythin.com",
+      password: "alicepass",
+      fullName: "Alice Wonderland",
+      status: "inactive",
+    }
+  ],
+  [
+    "5",
+    {
+      id: "5",
+      email: "bob.builder@everythin.com",
+      password: "canwebuildit",
+      fullName: "Bob Builder",
+      status: "active",
     }
   ]
 ])
@@ -29,6 +77,7 @@ const getUserInfoById = (id: string): UserInfo => {
         id: user.id,
         fullName: user.fullName,
         email: user.email,
+        status: user.status,
       }
     }
   }
@@ -40,6 +89,20 @@ const generateAccessToken = (user: UserInfo): string => {
 }
 
 // ------------------------------------------------------------------------------------------------
+
+export const getAll = async (): Promise<UserInfo[]> => {
+  // Simulate a delay to mimic real-world scenarios
+  await randomSleep()
+
+  return Array.from(users.values()).map(user => getUserInfoById(user.id))
+}
+
+export const getOneById = async (id: string): Promise<UserInfo> => {
+  // Simulate a delay to mimic real-world scenarios
+  await randomSleep()
+
+  return getUserInfoById(id)
+}
 
 export const isEmailTaken = (email: string): boolean => {
   for (const user of users.values()) {
@@ -67,7 +130,8 @@ export const register = async (email: string, password: string, fullName: string
     id,
     email,
     password,
-    fullName
+    fullName,
+    status: 'active'
   })
 
   return

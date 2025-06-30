@@ -2,6 +2,8 @@
   import { PAGES } from '$lib/constants/page.constant'
   import { page } from '$app/state'
 
+  import Avatar from '$lib/components/Avatar.svelte'
+
   const user = page.data.user
 
   interface SidebarItem {
@@ -32,6 +34,11 @@
         { title: PAGES.DOCUMENTATION.title, href: PAGES.DOCUMENTATION.path  },
       ],
     },
+    {
+      title: PAGES.EMPLOYEES.title,
+      href: PAGES.EMPLOYEES.path,
+      icon: 'mdi-account-group',
+    },
   ]
 </script>
 
@@ -40,7 +47,8 @@
     <li class="nav-item nav-profile">
       <a href="#" class="nav-link">
         <div class="nav-profile-image">
-          <img src="/images/faces/face1.jpg" alt="profile" />
+          <!-- <img src="/images/faces/face1.jpg" alt="profile" /> -->
+          <Avatar fullName={user.fullName} size={45} />
           <span class="login-status online"></span>
           <!--change to offline or busy as needed-->
         </div>

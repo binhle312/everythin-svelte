@@ -19,31 +19,31 @@
               <td>Jacob</td>
               <td>53275531</td>
               <td>12 May 2017</td>
-              <td><label class="badge badge-danger">Pending</label></td>
+              <td><span class="badge badge-danger">Pending</span></td>
             </tr>
             <tr>
               <td>Messsy</td>
               <td>53275532</td>
               <td>15 May 2017</td>
-              <td><label class="badge badge-warning">In progress</label></td>
+              <td><span class="badge badge-warning">In progress</span></td>
             </tr>
             <tr>
               <td>John</td>
               <td>53275533</td>
               <td>14 May 2017</td>
-              <td><label class="badge badge-info">Fixed</label></td>
+              <td><span class="badge badge-info">Fixed</span></td>
             </tr>
             <tr>
               <td>Peter</td>
               <td>53275534</td>
               <td>16 May 2017</td>
-              <td><label class="badge badge-success">Completed</label></td>
+              <td><span class="badge badge-success">Completed</span></td>
             </tr>
             <tr>
               <td>Dave</td>
               <td>53275535</td>
               <td>20 May 2017</td>
-              <td><label class="badge badge-warning">In progress</label></td>
+              <td><span class="badge badge-warning">In progress</span></td>
             </tr>
           </tbody>
         </table>
@@ -69,7 +69,7 @@
           <tbody>
             <tr>
               <td class="py-1">
-                <img src="../../assets/images/faces-clipart/pic-1.png" alt="image" />
+                <img src="/images/faces-clipart/pic-1.png" alt="pic-1.png" />
               </td>
               <td> Herman Beck </td>
               <td>
@@ -82,7 +82,7 @@
             </tr>
             <tr>
               <td class="py-1">
-                <img src="../../assets/images/faces-clipart/pic-2.png" alt="image" />
+                <img src="/images/faces-clipart/pic-2.png" alt="pic-2.png" />
               </td>
               <td> Messsy Adam </td>
               <td>
@@ -95,7 +95,7 @@
             </tr>
             <tr>
               <td class="py-1">
-                <img src="../../assets/images/faces-clipart/pic-3.png" alt="image" />
+                <img src="/images/faces-clipart/pic-3.png" alt="pic-3.png" />
               </td>
               <td> John Richards </td>
               <td>
@@ -108,7 +108,7 @@
             </tr>
             <tr>
               <td class="py-1">
-                <img src="../../assets/images/faces-clipart/pic-4.png" alt="image" />
+                <img src="/images/faces-clipart/pic-4.png" alt="pic-4.png" />
               </td>
               <td> Peter Meggik </td>
               <td>
@@ -121,7 +121,7 @@
             </tr>
             <tr>
               <td class="py-1">
-                <img src="../../assets/images/faces-clipart/pic-1.png" alt="image" />
+                <img src="/images/faces-clipart/pic-1.png" alt="pic-1.png" />
               </td>
               <td> Edward </td>
               <td>
@@ -134,7 +134,7 @@
             </tr>
             <tr>
               <td class="py-1">
-                <img src="../../assets/images/faces-clipart/pic-2.png" alt="image" />
+                <img src="/images/faces-clipart/pic-2.png" alt="pic-2.png" />
               </td>
               <td> John Doe </td>
               <td>
@@ -147,7 +147,7 @@
             </tr>
             <tr>
               <td class="py-1">
-                <img src="../../assets/images/faces-clipart/pic-3.png" alt="image" />
+                <img src="/images/faces-clipart/pic-3.png" alt="pic-3.png" />
               </td>
               <td> Henry Tom </td>
               <td>

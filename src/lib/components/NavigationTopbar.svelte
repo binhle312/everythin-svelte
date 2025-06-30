@@ -2,6 +2,8 @@
   import { goto } from '$app/navigation'
   import { page } from '$app/state'
 
+  import Avatar from '$lib/components/Avatar.svelte'
+
   const user = page.data.user
 </script>
 
@@ -28,7 +30,7 @@
       <li class="nav-item nav-profile dropdown">
         <a class="nav-link dropdown-toggle" id="profileDropdown" href="unknow" data-bs-toggle="dropdown" aria-expanded="false">
           <div class="nav-profile-img">
-            <img src="/images/faces/face1.jpg" alt="face1">
+            <Avatar fullName={user.fullName} size={30} />
             <span class="availability-status online"></span>
           </div>
           <div class="nav-profile-text">
