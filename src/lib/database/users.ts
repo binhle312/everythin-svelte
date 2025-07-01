@@ -11,7 +11,7 @@ type User = {
   status: 'active' | 'inactive';
 }
 
-type UserInfo = Omit<User, 'password'>
+export type UserInfo = Omit<User, 'password'>
 
 // ------------------------------------------------------------------------------------------------
 

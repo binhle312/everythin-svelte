@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { preloadCode } from "$app/navigation"
   import { enhance } from "$app/forms"
   import {
     validateFullname,
@@ -6,8 +7,8 @@
     validateConfirmPassword,
     validateEmailForRegister,
   } from "../validate"
-
   import AuthInput from "$lib/components/auth-input.svelte"
+  import { PAGES } from '$lib/constants/page.constant'
 
   let { form } = $props()
 
@@ -24,6 +25,8 @@
   let rePasswordError = $state('')
 
   let submitting = $state(false)
+
+  preloadCode(PAGES.LOGIN.path)
 </script>
 
 <h4>New here?</h4>
