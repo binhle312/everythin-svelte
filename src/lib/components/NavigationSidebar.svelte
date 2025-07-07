@@ -35,10 +35,20 @@
       ],
     },
     {
-      title: PAGES.EMPLOYEES.title,
-      href: PAGES.EMPLOYEES.path,
-      icon: 'mdi-account-group',
-    },
+      title: PAGES.COUNTER.title,
+      href: PAGES.COUNTER.path,
+      icon: 'mdi-alarm',
+    }
+    // {
+    //   title: PAGES.EMPLOYEES.title,
+    //   href: PAGES.EMPLOYEES.path,
+    //   icon: 'mdi-account-group',
+    // },
+    // {
+    //   title: PAGES.ASSISTANCE.title,
+    //   href: PAGES.ASSISTANCE.path,
+    //   icon: 'mdi-robot',
+    // },
   ]
 </script>
 
