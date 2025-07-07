@@ -23,8 +23,6 @@
     employees.set(page.data?.employees || [])
   })
 
-  $inspect($updatingId)
-
   onDestroy(() => {
     toggleNavigating(null)
   })
