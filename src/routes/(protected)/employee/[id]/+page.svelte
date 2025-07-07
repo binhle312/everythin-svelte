@@ -1,6 +1,6 @@
 <script lang="ts">
   import { page } from '$app/state'
-  import { goto } from '$app/navigation'
+  import { goto, preloadData } from '$app/navigation'
   import Avatar from '$lib/components/Avatar.svelte'
 
   let employee = page.data.employee
@@ -370,10 +370,6 @@
 
   .btn {
     transition: all 0.2s ease-in-out;
-  }
-
-  .required {
-    color: #dc3545;
   }
 
   @media (max-width: 768px) {

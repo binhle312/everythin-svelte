@@ -1,6 +1,7 @@
 <script lang="ts">
   import { page } from '$app/state'
   import Avatar from '$lib/components/Avatar.svelte'
+	import { onDestroy } from 'svelte';
   import {
     employees,
     searchTerm,
@@ -13,10 +14,19 @@
     refreshEmployees,
     updatingId,
     handleToggleStatus,
+    navigatingId,
+    toggleNavigating,
   } from './store'
+	import { goto } from '$app/navigation';
 
   $effect(() => {
     employees.set(page.data?.employees || [])
+  })
+
+  $inspect($updatingId)
+
+  onDestroy(() => {
+    toggleNavigating(null)
   })
 </script>
 
@@ -206,15 +216,23 @@
                     </td>
                     <td class="text-center">
                       <div class="btn-group" role="group">
-                        <a
-                          href="/employee/{employee.id}"
-                          class="btn btn-outline-primary btn-sm"
-                          title="View Details"
-                          aria-label="View Details"
-                          data-sveltekit-preload-data
-                        >
-                          <i class="fa fa-eye"></i>
-                        </a>
+                          <button
+                            class="btn btn-outline-primary btn-sm"
+                            title="View Details"
+                            aria-label="View Details"
+                            data-sveltekit-preload-data
+                            disabled={$navigatingId === employee.id}
+                            onclick={() => {
+                              toggleNavigating(employee.id)
+                              goto(`/employee/${employee.id}`)
+                            }}
+                          >
+                            {#if $navigatingId === employee.id}
+                              <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                            {:else}
+                              <i class="fa fa-eye"></i>
+                            {/if}
+                          </button>
                         {#if employee.id !== page.data.user.id}
                           <button
                             type="button"
@@ -222,8 +240,9 @@
                             title="{employee.status === 'active' ? 'Deactivate' : 'Activate'} Employee"
                             aria-label="{employee.status === 'active' ? 'Deactivate' : 'Activate'} Employee"
                             onclick={() => handleToggleStatus(employee.id)}
+                            disabled={$updatingId?.[employee.id]}
                           >
-                            {#if $updatingId === employee.id}
+                            {#if $updatingId?.[employee.id]}
                               <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
                             {:else}
                               <i class="fa fa-{employee.status === 'active' ? 'unlock' : 'lock'}"></i>
@@ -456,10 +475,6 @@
     .d-flex.justify-content-end {
       justify-content: center !important;
       margin-top: 1rem;
-    }
-
-    .control-panel .row > div:first-child {
-      margin-bottom: 1rem;
     }
   }
 

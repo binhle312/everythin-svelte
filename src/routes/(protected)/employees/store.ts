@@ -1,8 +1,7 @@
-import { page } from '$app/state'
 import { writable, derived } from 'svelte/store'
 import type { UserInfo } from '$lib/database/users'
 
-export const employees = writable<UserInfo[]>(page.data?.employees || [])
+export const employees = writable<UserInfo[]>([])
 export const searchTerm = writable('')
 export const statusFilter = writable<'all' | 'active' | 'inactive'>('all')
 
@@ -21,9 +20,6 @@ export const filteredEmployees = derived([employees, searchTerm, statusFilter], 
   })
 )
 
-// View detail employee
-export const isNavigating = writable(false)
-
 // Refresh employees
 export const isRefreshing = writable(false)
 export const refreshEmployees = async () => {
@@ -36,11 +32,16 @@ export const refreshEmployees = async () => {
   isRefreshing.set(false)
 }
 
-// Toggle employee status
-export const updatingId = writable<string | null>(null)
+// View detail employee
+export const navigatingId = writable<string | null>(null)
+export const toggleNavigating = (employeeId: string | null) => {
+  navigatingId.set(employeeId)
+}
 
+// Update employee status
+export const updatingId = writable<{[index: string]: boolean} | null>({})
 export const handleToggleStatus = async (employeeId: string, ) => {
-  updatingId.set(employeeId)
+  updatingId.update(current => ({ ...(current ?? {}), [employeeId]: true }))
 
   const response = await fetch(`/api/employee/${employeeId}/status`, {
     method: 'PUT',
@@ -58,5 +59,10 @@ export const handleToggleStatus = async (employeeId: string, ) => {
     })
   }
 
-  updatingId.set(null)
+  // Remove the loading state for this specific employee
+  updatingId.update(current => {
+    const updated = { ...(current ?? {}) }
+    delete updated[employeeId]
+    return updated
+  })
 }
