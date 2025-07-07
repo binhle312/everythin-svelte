@@ -1,50 +1,34 @@
 <script lang="ts">
   import { page } from '$app/state'
-  import type { UserInfo } from '$lib/database/users'
   import Avatar from '$lib/components/Avatar.svelte'
+  import {
+    employees,
+    searchTerm,
+    statusFilter,
+    statsTotal,
+    statsActive,
+    statsInactive,
+    filteredEmployees,
+    isRefreshing,
+    refreshEmployees,
+    updatingId,
+    handleToggleStatus,
+  } from './store'
 
-  const users: UserInfo[] = page.data.users || []
-  let searchTerm = ''
-  let statusFilter = 'all'
-
-  // Computed filtered users
-  $: filteredUsers = users.filter(user => {
-    const matchesSearch =
-      user.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.email.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesStatus = statusFilter === 'all' || user.status === statusFilter
-    return matchesSearch && matchesStatus
+  $effect(() => {
+    employees.set(page.data?.employees || [])
   })
-
-  // Statistics
-  $: stats = {
-    total: users.length,
-    active: users.filter(u => u.status === 'active').length,
-    inactive: users.filter(u => u.status === 'inactive').length
-  }
-
-  const handleToggleStatus = (userId: string, currentStatus: string) => {
-    // Here you would typically call an API to toggle the status
-    console.log(`Toggling status for user ${userId} from ${currentStatus}`)
-    alert(`This would toggle the user status from ${currentStatus} to ${currentStatus === 'active' ? 'inactive' : 'active'}`)
-  }
 </script>
 
 <!-- Page Header with Statistics -->
-<div class="row">
-  <div class="col-12">
-    <div class="page-header">
-      <h3 class="page-title">
-        <i class="fa fa-users me-2"></i>Employee Management
-      </h3>
-      <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
+<div class="page-header">
+  <h3 class="page-title"> Employees </h3>
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="/">Dashboard</a></li>
           <li class="breadcrumb-item active" aria-current="page">Employees</li>
-        </ol>
-      </nav>
-    </div>
-  </div>
+    </ol>
+  </nav>
 </div>
 
 <!-- Statistics Cards -->
@@ -55,7 +39,7 @@
         <div class="d-flex justify-content-between align-items-center">
           <div>
             <h6 class="card-title mb-0">Total Employees</h6>
-            <h2 class="mb-0">{stats.total}</h2>
+            <h2 class="mb-0">{$statsTotal}</h2>
           </div>
           <div class="icon-large">
             <i class="fa fa-users"></i>
@@ -70,10 +54,10 @@
         <div class="d-flex justify-content-between align-items-center">
           <div>
             <h6 class="card-title mb-0">Active Employees</h6>
-            <h2 class="mb-0">{stats.active}</h2>
+            <h2 class="mb-0">{$statsActive}</h2>
           </div>
           <div class="icon-large">
-            <i class="fa fa-user-check"></i>
+            <i class="fa fa-user"></i>
           </div>
         </div>
       </div>
@@ -85,10 +69,10 @@
         <div class="d-flex justify-content-between align-items-center">
           <div>
             <h6 class="card-title mb-0">Inactive Employees</h6>
-            <h2 class="mb-0">{stats.inactive}</h2>
+            <h2 class="mb-0">{$statsInactive}</h2>
           </div>
           <div class="icon-large">
-            <i class="fa fa-user-times"></i>
+            <i class="fa fa-user-o"></i>
           </div>
         </div>
       </div>
@@ -114,14 +98,21 @@
                     type="text"
                     class="form-control"
                     placeholder="Search employees..."
-                    bind:value={searchTerm}
+                    value={$searchTerm}
+                    disabled={$isRefreshing}
+                    onkeyup={(e) => { if (e.target) searchTerm.set((e.target as HTMLInputElement).value) }}
                   >
                 </div>
               </div>
 
               <!-- Status Filter -->
               <div>
-                <select class="form-select" bind:value={statusFilter}>
+                <select
+                  class="form-select"
+                  value={$statusFilter}
+                  disabled={$isRefreshing}
+                  onchange={(e) => statusFilter.set((e.target as HTMLSelectElement).value as 'all' | 'active' | 'inactive')}
+                >
                   <option value="all">All Status</option>
                   <option value="active">Active Only</option>
                   <option value="inactive">Inactive Only</option>
@@ -133,11 +124,11 @@
           <div class="col-md-6">
             <div class="d-flex justify-content-end align-items-center gap-2">
               <!-- Action Buttons -->
-              <button type="button" class="btn btn-primary">
-                <i class="fa fa-plus me-2"></i>Add Employee
+              <button type="button" class="btn btn-primary" disabled={$isRefreshing}>
+                <i class="fa fa-user-plus me-2"></i>Add Employee
               </button>
-              <button type="button" class="btn btn-outline-secondary">
-                <i class="fa fa-cog me-2"></i>Settings
+              <button type="button" class="btn btn-outline-secondary" onclick={refreshEmployees} disabled={$isRefreshing}>
+                <i class="fa fa-refresh me-2"></i>Refresh
               </button>
             </div>
           </div>
@@ -151,12 +142,12 @@
 <div class="row mb-3">
   <div class="col-12">
     <p class="text-muted mb-0">
-      Showing {filteredUsers.length} of {users.length} employees
-      {#if searchTerm || statusFilter !== 'all'}
+      Showing {$filteredEmployees.length} of {$employees.length} employees
+      {#if $searchTerm || $statusFilter !== 'all'}
         <button
           type="button"
           class="btn btn-link btn-sm p-0 ms-2"
-          on:click={() => { searchTerm = ''; statusFilter = 'all' }}
+          onclick={() => { $searchTerm = ''; $statusFilter = 'all' }}
         >
           Clear filters
         </button>
@@ -182,54 +173,68 @@
               </tr>
             </thead>
             <tbody>
-              {#each filteredUsers as user, index}
-                <tr class="employee-row {user.status}">
-                  <td class="fw-bold">{index + 1}</td>
-                  <td>
-                    <div class="d-flex align-items-center">
-                      <div class="position-relative me-3">
-                        <Avatar fullName={user.fullName} size={40} />
-                        <span class="status-dot status-{user.status}"></span>
-                      </div>
-                      <div>
-                        <h6 class="mb-0">{user.fullName}</h6>
-                        <small class="text-muted">ID: {user.id}</small>
-                      </div>
-                    </div>
-                  </td>
-                  <td class="text-muted">{user.email}</td>
-                  <td class="text-center">
-                    <span class="badge badge-{user.status === 'active' ? 'success' : 'secondary'} px-3 py-2">
-                      <i class="fa fa-{user.status === 'active' ? 'check-circle' : 'times-circle'} me-1"></i>
-                      {user.status}
-                    </span>
-                  </td>
-                  <td class="text-center">
-                    <div class="btn-group" role="group">
-                      <a
-                        href="/employee/{user.id}"
-                        class="btn btn-outline-primary btn-sm"
-                        title="View Details"
-                        aria-label="View Details"
-                        data-sveltekit-preload-data
-                      >
-                        <i class="fa fa-eye"></i>
-                      </a>
-                      {#if user.id !== page.data.user.id}
-                        <button
-                          type="button"
-                          class="btn btn-outline-{user.status === 'active' ? 'warning' : 'success'} btn-sm"
-                          title="{user.status === 'active' ? 'Deactivate' : 'Activate'} Employee"
-                          aria-label="{user.status === 'active' ? 'Deactivate' : 'Activate'} Employee"
-                          on:click={() => handleToggleStatus(user.id, user.status)}
-                        >
-                          <i class="fa fa-{user.status === 'active' ? 'unlock' : 'lock'}"></i>
-                        </button>
-                      {/if}
+              {#if $isRefreshing}
+                <tr>
+                  <td colspan="5" class="text-center">
+                    <div class="spinner-border text-primary" role="status">
+                      <span class="visually-hidden">Loading...</span>
                     </div>
                   </td>
                 </tr>
-              {/each}
+              {:else}
+                {#each $filteredEmployees as employee, index}
+                  <tr class="employee-row {employee.status}">
+                    <td class="fw-bold">{index + 1}</td>
+                    <td>
+                      <div class="d-flex align-items-center">
+                        <div class="position-relative me-3">
+                          <Avatar fullName={employee.fullName} size={40} />
+                          <span class="status-dot status-{employee.status}"></span>
+                        </div>
+                        <div>
+                          <h6 class="mb-0">{employee.fullName}</h6>
+                          <small class="text-muted">ID: {employee.id}</small>
+                        </div>
+                      </div>
+                    </td>
+                    <td class="text-muted">{employee.email}</td>
+                    <td class="text-center">
+                      <span class="badge badge-{employee.status === 'active' ? 'success' : 'secondary'} px-3 py-2">
+                        <i class="fa fa-{employee.status === 'active' ? 'check-circle' : 'times-circle'} me-1"></i>
+                        {employee.status}
+                      </span>
+                    </td>
+                    <td class="text-center">
+                      <div class="btn-group" role="group">
+                        <a
+                          href="/employee/{employee.id}"
+                          class="btn btn-outline-primary btn-sm"
+                          title="View Details"
+                          aria-label="View Details"
+                          data-sveltekit-preload-data
+                        >
+                          <i class="fa fa-eye"></i>
+                        </a>
+                        {#if employee.id !== page.data.user.id}
+                          <button
+                            type="button"
+                            class="btn btn-outline-{employee.status === 'active' ? 'warning' : 'success'} btn-sm"
+                            title="{employee.status === 'active' ? 'Deactivate' : 'Activate'} Employee"
+                            aria-label="{employee.status === 'active' ? 'Deactivate' : 'Activate'} Employee"
+                            onclick={() => handleToggleStatus(employee.id)}
+                          >
+                            {#if $updatingId === employee.id}
+                              <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                            {:else}
+                              <i class="fa fa-{employee.status === 'active' ? 'unlock' : 'lock'}"></i>
+                            {/if}
+                          </button>
+                        {/if}
+                      </div>
+                    </td>
+                  </tr>
+                {/each}
+              {/if}
             </tbody>
           </table>
         </div>
@@ -239,7 +244,7 @@
 </div>
 
 <!-- Empty State -->
-{#if filteredUsers.length === 0}
+{#if $filteredEmployees.length === 0}
   <div class="row">
     <div class="col-12">
       <div class="card">
@@ -248,17 +253,17 @@
             <i class="fa fa-users fa-3x text-muted mb-3"></i>
             <h4 class="text-muted">No employees found</h4>
             <p class="text-muted">
-              {#if searchTerm || statusFilter !== 'all'}
+              {#if $searchTerm || $statusFilter !== 'all'}
                 Try adjusting your search criteria or filters.
               {:else}
                 Start by adding your first employee to the system.
               {/if}
             </p>
-            {#if searchTerm || statusFilter !== 'all'}
-              <button 
-                type="button" 
+            {#if $searchTerm || $statusFilter !== 'all'}
+              <button
+                type="button"
                 class="btn btn-outline-primary"
-                on:click={() => { searchTerm = ''; statusFilter = 'all' }}
+                onclick={() => { searchTerm.set(''); statusFilter.set('all') }}
               >
                 Clear Filters
               </button>
@@ -275,113 +280,10 @@
 {/if}
 
 <style>
-  /* Page Header Styles */
-  .page-header {
-    padding: 1.5rem 0;
-    border-bottom: 1px solid #e3e6f0;
-    margin-bottom: 2rem;
-  }
-
-  .page-title {
-    color: #5a5c69;
-    font-weight: 600;
-    margin-bottom: 0.5rem;
-  }
-
-  .breadcrumb {
-    background: none;
-    padding: 0;
-    margin-bottom: 0;
-  }
-
-  .breadcrumb-item a {
-    color: #858796;
-    text-decoration: none;
-  }
-
-  .breadcrumb-item a:hover {
-    color: #5a5c69;
-  }
-
   /* Statistics Cards */
-  .bg-gradient-primary {
-    background: linear-gradient(87deg, #5e72e4 0, #825ee4 100%);
-  }
-
-  .bg-gradient-success {
-    background: linear-gradient(87deg, #2dce89 0, #2dcecc 100%);
-  }
-
-  .bg-gradient-warning {
-    background: linear-gradient(87deg, #fb6340 0, #fbb140 100%);
-  }
-
   .icon-large {
     font-size: 2.5rem;
     opacity: 0.8;
-  }
-
-  /* Employee Cards (Grid View) */
-  .employee-card {
-    transition: all 0.3s ease;
-    border: none;
-    box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
-    position: relative;
-    overflow: hidden;
-  }
-
-  .employee-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 4px;
-    background: linear-gradient(90deg, #5e72e4, #825ee4);
-    transform: scaleX(0);
-    transition: transform 0.3s ease;
-  }
-
-  .employee-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 0.25rem 2rem 0 rgba(58, 59, 69, 0.2);
-  }
-
-  .employee-card:hover::before {
-    transform: scaleX(1);
-  }
-
-  .employee-card.inactive {
-    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-  }
-
-  .employee-card.inactive .card-title {
-    color: #6c757d;
-  }
-
-  /* Avatar Container */
-  .employee-avatar-container {
-    position: relative;
-    display: inline-block;
-  }
-
-  .status-indicator {
-    position: absolute;
-    bottom: 5px;
-    right: 5px;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    border: 3px solid white;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  }
-
-  .status-indicator.status-active {
-    background: #28a745;
-  }
-
-  .status-indicator.status-inactive {
-    background: #6c757d;
   }
 
   /* Status Dot for Table View */

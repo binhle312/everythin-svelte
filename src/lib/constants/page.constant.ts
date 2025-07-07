@@ -16,6 +16,6 @@ export const PAGES: Record<string, PageConfig> = Object.freeze({
   TABLES        : { path: '/basic-ui-elements/tables'       , title: 'Tables'         },
   DOCUMENTATION : { path: '/basic-ui-elements/documentation', title: 'Documentation'  },
   COUNTER       : { path: '/counter'                        , title: 'Counter'        },
-  // EMPLOYEES     : { path: '/employees'                      , title: 'Employees'      },
-  // ASSISTANCE    : { path: '/assistance'                     , title: 'Assistance'     },
+  EMPLOYEES     : { path: '/employees'                      , title: 'Employees'      },
+  ASSISTANCE    : { path: '/assistance'                     , title: 'Assistance'     },
 })

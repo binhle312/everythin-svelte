@@ -154,3 +154,18 @@ export const verifyToken = async (accessToken: string) => {
 
   return jwt.verify(accessToken, JWT_ACCESS_SECRET) as UserInfo
 }
+
+export const toggleStatus = async (id: string) => {
+  // Simulate a delay to mimic real-world scenarios
+  await randomSleep()
+
+  if (!users.has(id)) {
+    throw new Error('User not found')
+  }
+
+  const user = users.get(id)!
+  user.status = user.status === 'active' ? 'inactive' : 'active'
+  users.set(id, user)
+
+  return getUserInfoById(id)
+}
